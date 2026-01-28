@@ -5,8 +5,8 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 interface EventData {
   timestamp: string;
-  event: string;
-  event_type: string;
+  eventKey: string;
+  eventTypeKey: string;
   email: string;
   status: "Success" | "In Process" | "Failed";
 }
@@ -15,22 +15,22 @@ interface EventData {
 const eventData: EventData[] = [
   {
     timestamp: "2026-01-21 10:30:00",
-    event: "Fire alarm triggered",
-    event_type: "Emergency",
+    eventKey: "event_fire_alarm",
+    eventTypeKey: "event_type_emergency",
     email: "admin@company.com",
     status: "Success",
   },
   {
     timestamp: "2026-01-21 09:15:00",
-    event: "Equipment malfunction",
-    event_type: "Breakdown",
+    eventKey: "event_equipment_malfunction",
+    eventTypeKey: "event_type_breakdown",
     email: "tech@company.com",
     status: "In Process",
   },
   {
     timestamp: "2026-01-20 16:45:00",
-    event: "Power outage",
-    event_type: "Emergency",
+    eventKey: "event_power_outage",
+    eventTypeKey: "event_type_emergency",
     email: "facilities@company.com",
     status: "Failed",
   },
@@ -96,59 +96,65 @@ export default function Home() {
         <h3 className="text-xl font-semibold text-center text-gray-700 mb-6">
           {t("recent_events")}
         </h3>
-        <div className="overflow-x-auto mb-16 pb-16">
-          <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
-            <thead>
-              <tr className="bg-gray-800 text-white">
-                <th className="px-4 py-3 text-center">{t("th_no")}</th>
-                <th className="px-4 py-3 text-center">{t("th_timestamp")}</th>
-                <th className="px-4 py-3 text-center">{t("th_event")}</th>
-                <th className="px-4 py-3 text-center">{t("th_type")}</th>
-                <th className="px-4 py-3 text-center">{t("th_email")}</th>
-                <th className="px-4 py-3 text-center">{t("th_status")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {eventData.length > 0 ? (
-                eventData.map((event, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-4 py-3 text-center text-gray-700">
-                      {index + 1}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-700">
-                      {event.timestamp}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-700">
-                      {event.event}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="truncate block max-w-xs">
-                        {event.event_type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-700">
-                      {event.email}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <StatusBadge status={event.status} t={t} />
+        <div className="mb-16 pb-16 bg-white shadow-md rounded-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-gray-800 text-white">
+                  <th className="px-4 py-3 text-center">{t("th_no")}</th>
+                  <th className="px-4 py-3 text-center">{t("th_timestamp")}</th>
+                  <th className="px-4 py-3 text-center">{t("th_event")}</th>
+                  <th className="px-4 py-3 text-center">{t("th_type")}</th>
+                  <th className="px-4 py-3 text-center">{t("th_email")}</th>
+                  <th className="px-4 py-3 text-center">{t("th_status")}</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div className="overflow-y-auto max-h-[280px]">
+            <table className="w-full border-collapse">
+              <tbody>
+                {eventData.length > 0 ? (
+                  eventData.map((event, index) => (
+                    <tr
+                      key={index}
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-4 py-3 text-center text-gray-700">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-700">
+                        {event.timestamp}
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-700">
+                        {t(event.eventKey)}
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-700">
+                        <span className="truncate block max-w-xs">
+                          {t(event.eventTypeKey)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center text-gray-700">
+                        {event.email}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <StatusBadge status={event.status} t={t} />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-4 py-8 text-center text-gray-500"
+                    >
+                      {t("no_events")}
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-4 py-8 text-center text-gray-500"
-                  >
-                    {t("no_events")}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

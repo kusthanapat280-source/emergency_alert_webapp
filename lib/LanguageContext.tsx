@@ -24,7 +24,7 @@ const translations: Record<Language, Record<string, string>> = {
     home_title: "Emergency and Breakdown Alerts",
     btn_emergency: "Emergency",
     btn_breakdown: "Breakdown",
-    recent_events: "Recent Events",
+    recent_events: "Report Table",
     th_no: "No.",
     th_timestamp: "Timestamp",
     th_event: "Event",
@@ -35,6 +35,15 @@ const translations: Record<Language, Record<string, string>> = {
     status_in_process: "In Process",
     status_failed: "Failed",
     no_events: "No events found",
+
+    // Event names
+    event_fire_alarm: "Fire alarm triggered",
+    event_equipment_malfunction: "Equipment malfunction",
+    event_power_outage: "Power outage",
+
+    // Event types
+    event_type_emergency: "Emergency",
+    event_type_breakdown: "Breakdown",
 
     // Emergency page
     emergency_title: "Report Emergency",
@@ -76,6 +85,10 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Contact page
     contact_title: "Contact Us",
+
+    // Footer
+    footer_contact: "Contact",
+    footer_name: "Prapawit",
   },
   th: {
     // Navbar
@@ -88,7 +101,7 @@ const translations: Record<Language, Record<string, string>> = {
     home_title: "ระบบแจ้งเหตุฉุกเฉินและเหตุขัดข้อง",
     btn_emergency: "เหตุฉุกเฉิน",
     btn_breakdown: "เหตุขัดข้อง",
-    recent_events: "เหตุการณ์ล่าสุด",
+    recent_events: "ตารางแจ้งเหตุ",
     th_no: "ลำดับ",
     th_timestamp: "เวลา",
     th_event: "เหตุการณ์",
@@ -99,6 +112,15 @@ const translations: Record<Language, Record<string, string>> = {
     status_in_process: "กำลังดำเนินการ",
     status_failed: "ล้มเหลว",
     no_events: "ไม่พบเหตุการณ์",
+
+    // Event names
+    event_fire_alarm: "สัญญาณเตือนไฟไหม้ดังขึ้น",
+    event_equipment_malfunction: "อุปกรณ์ทำงานผิดปกติ",
+    event_power_outage: "ไฟฟ้าดับ",
+
+    // Event types
+    event_type_emergency: "เหตุฉุกเฉิน",
+    event_type_breakdown: "เหตุขัดข้อง",
 
     // Emergency page
     emergency_title: "แจ้งเหตุฉุกเฉิน",
@@ -140,6 +162,10 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Contact page
     contact_title: "ติดต่อเรา",
+
+    // Footer
+    footer_contact: "ติดต่อ",
+    footer_name: "ประภวิษณุ์",
   },
 };
 

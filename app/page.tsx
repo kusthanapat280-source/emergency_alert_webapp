@@ -1,65 +1,156 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { useLanguage } from "@/lib/LanguageContext";
+
+interface EventData {
+  timestamp: string;
+  event: string;
+  event_type: string;
+  email: string;
+  status: "Success" | "In Process" | "Failed";
+}
+
+// Mock data for demonstration - replace with actual API call
+const eventData: EventData[] = [
+  {
+    timestamp: "2026-01-21 10:30:00",
+    event: "Fire alarm triggered",
+    event_type: "Emergency",
+    email: "admin@company.com",
+    status: "Success",
+  },
+  {
+    timestamp: "2026-01-21 09:15:00",
+    event: "Equipment malfunction",
+    event_type: "Breakdown",
+    email: "tech@company.com",
+    status: "In Process",
+  },
+  {
+    timestamp: "2026-01-20 16:45:00",
+    event: "Power outage",
+    event_type: "Emergency",
+    email: "facilities@company.com",
+    status: "Failed",
+  },
+];
+
+function StatusBadge({ status, t }: { status: EventData["status"]; t: (key: string) => string }) {
+  const badgeStyles = {
+    Success: "bg-green-500 text-white",
+    "In Process": "bg-blue-400 text-gray-900",
+    Failed: "bg-red-500 text-white",
+  };
+
+  const statusLabels = {
+    Success: t("status_success"),
+    "In Process": t("status_in_process"),
+    Failed: t("status_failed"),
+  };
+
+  return (
+    <span
+      className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${badgeStyles[status]}`}
+    >
+      {statusLabels[status]}
+    </span>
+  );
+}
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        {/* Title */}
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-12">
+          {t("home_title")}
+        </h1>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-8 mb-16 pb-8">
+          <Link
+            href="/emergency"
+            className="bg-red-600 hover:bg-red-700 text-white text-xl font-semibold py-4 px-10 rounded-lg transition-colors duration-200 shadow-lg"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {t("btn_emergency")}
+          </Link>
+          <Link
+            href="/breakdown"
+            className="text-white text-xl font-semibold py-4 px-10 rounded-lg transition-colors duration-200 shadow-lg"
+            style={{ backgroundColor: "#45cf13" }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#3db810")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#45cf13")
+            }
           >
-            Documentation
-          </a>
+            {t("btn_breakdown")}
+          </Link>
         </div>
-      </main>
+
+        {/* Data Table */}
+        <h3 className="text-xl font-semibold text-center text-gray-700 mb-6">
+          {t("recent_events")}
+        </h3>
+        <div className="overflow-x-auto mb-16 pb-16">
+          <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+            <thead>
+              <tr className="bg-gray-800 text-white">
+                <th className="px-4 py-3 text-center">{t("th_no")}</th>
+                <th className="px-4 py-3 text-center">{t("th_timestamp")}</th>
+                <th className="px-4 py-3 text-center">{t("th_event")}</th>
+                <th className="px-4 py-3 text-center">{t("th_type")}</th>
+                <th className="px-4 py-3 text-center">{t("th_email")}</th>
+                <th className="px-4 py-3 text-center">{t("th_status")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {eventData.length > 0 ? (
+                eventData.map((event, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="px-4 py-3 text-center text-gray-700">
+                      {index + 1}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-700">
+                      {event.timestamp}
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-700">
+                      {event.event}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className="truncate block max-w-xs">
+                        {event.event_type}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-700">
+                      {event.email}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <StatusBadge status={event.status} t={t} />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="px-4 py-8 text-center text-gray-500"
+                  >
+                    {t("no_events")}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

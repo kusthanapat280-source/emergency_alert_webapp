@@ -128,6 +128,7 @@ export default function OperatorPage() {
     currentStatus: string;
     onUpdate: (id: number, status: string) => void;
   }) {
+    const [open, setOpen] = useState(false);
     const isUpdating = updating === id;
     const isFinalized = currentStatus === "Success" || currentStatus === "Failed";
 
@@ -135,26 +136,65 @@ export default function OperatorPage() {
       return <span className="text-slate-300 text-sm">—</span>;
     }
 
+    if (isUpdating) {
+      return (
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-400 text-xs font-medium">
+          <span className="w-3 h-3 border border-slate-300 border-t-indigo-500 rounded-full animate-spin-smooth" />
+          Updating...
+        </div>
+      );
+    }
+
     return (
       <div className="relative inline-block">
-        {isUpdating ? (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-400 text-xs">
-            <span className="w-3 h-3 border border-slate-300 border-t-slate-500 rounded-full animate-spin-smooth" />
-            Updating...
-          </div>
-        ) : (
-          <select
-            defaultValue=""
-            disabled={isUpdating}
-            onChange={(e) => {
-              if (e.target.value) onUpdate(id, e.target.value);
-            }}
-            className="appearance-none pl-3 pr-8 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-medium cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400/40 focus:border-indigo-400 transition-all hover:border-slate-300"
+        {/* Trigger Button */}
+        <button
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-indigo-300 text-slate-600 text-xs font-medium transition-all duration-150 shadow-sm"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+          Set outcome
+          <svg
+            className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
           >
-            <option value="" disabled>Update status</option>
-            <option value="Success" className="text-emerald-700 font-semibold">Success</option>
-            <option value="Failed" className="text-red-600 font-semibold">Failed</option>
-          </select>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Dropdown Menu */}
+        {open && (
+          <>
+            {/* Backdrop */}
+            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+            {/* Menu */}
+            <div className="absolute right-0 mt-1.5 z-20 w-36 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden animate-fadeIn">
+              <div className="p-1">
+                <button
+                  onClick={() => { setOpen(false); onUpdate(id, "Success"); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors duration-100"
+                >
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100">
+                    <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  Success
+                </button>
+                <button
+                  onClick={() => { setOpen(false); onUpdate(id, "Failed"); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors duration-100"
+                >
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
+                    <svg className="w-3 h-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </span>
+                  Failed
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     );

@@ -15,6 +15,7 @@ export default function Navbar() {
     { href: "/", label: t("nav_home") },
     { href: "/emergency", label: t("nav_emergency") },
     { href: "/breakdown", label: t("nav_breakdown") },
+    { href: "/login_admin", label: "Admin" },
   ];
 
   const toggleLanguage = () => {

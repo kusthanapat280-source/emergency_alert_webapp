@@ -123,12 +123,11 @@ export default function OperatorPage() {
   const thCls = "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap";
   const tdCls = "px-4 py-3 text-sm text-slate-700";
 
-  function ActionDropdown({ id, currentStatus, onUpdate }: {
+  function ActionButtons({ id, currentStatus, onUpdate }: {
     id: number;
     currentStatus: string;
     onUpdate: (id: number, status: string) => void;
   }) {
-    const [open, setOpen] = useState(false);
     const isUpdating = updating === id;
     const isFinalized = currentStatus === "Success" || currentStatus === "Failed";
 
@@ -138,64 +137,29 @@ export default function OperatorPage() {
 
     if (isUpdating) {
       return (
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-400 text-xs font-medium">
-          <span className="w-3 h-3 border border-slate-300 border-t-indigo-500 rounded-full animate-spin-smooth" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-400 text-xs font-medium border border-slate-200">
+          <span className="w-2.5 h-2.5 border border-slate-300 border-t-indigo-400 rounded-full animate-spin-smooth" />
           Updating...
         </div>
       );
     }
 
     return (
-      <div className="relative inline-block">
-        {/* Trigger Button */}
+      <div className="inline-flex items-center gap-1.5">
         <button
-          onClick={() => setOpen((v) => !v)}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 hover:border-indigo-300 text-slate-600 text-xs font-medium transition-all duration-150 shadow-sm"
+          onClick={() => onUpdate(id, "Success")}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all duration-150"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-          Set outcome
-          <svg
-            className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          Success
         </button>
-
-        {/* Dropdown Menu */}
-        {open && (
-          <>
-            {/* Backdrop */}
-            <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-            {/* Menu */}
-            <div className="absolute right-0 mt-1.5 z-20 w-36 bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden animate-fadeIn">
-              <div className="p-1">
-                <button
-                  onClick={() => { setOpen(false); onUpdate(id, "Success"); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors duration-100"
-                >
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100">
-                    <svg className="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </span>
-                  Success
-                </button>
-                <button
-                  onClick={() => { setOpen(false); onUpdate(id, "Failed"); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors duration-100"
-                >
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-red-100">
-                    <svg className="w-3 h-3 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </span>
-                  Failed
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+        <button
+          onClick={() => onUpdate(id, "Failed")}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:border-red-300 transition-all duration-150"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+          Failed
+        </button>
       </div>
     );
   }
@@ -299,7 +263,7 @@ export default function OperatorPage() {
                       </td>
                       <td className={tdCls}><StatusBadge status={r.status} /></td>
                       <td className={tdCls}>
-                        <ActionDropdown
+                        <ActionButtons
                           id={r.id}
                           currentStatus={r.status}
                           onUpdate={updateEmergencyStatus}
@@ -350,7 +314,7 @@ export default function OperatorPage() {
                       </td>
                       <td className={tdCls}><StatusBadge status={r.status} /></td>
                       <td className={tdCls}>
-                        <ActionDropdown
+                        <ActionButtons
                           id={r.id}
                           currentStatus={r.status}
                           onUpdate={updateBreakdownStatus}

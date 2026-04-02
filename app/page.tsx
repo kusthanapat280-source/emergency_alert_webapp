@@ -23,12 +23,32 @@ interface BreakdownRow {
   status: string;
 }
 
-function getStatusStyle(s: string): string {
-  if (s === "Waiting") return "bg-orange-400 text-white";
-  if (s === "In Process") return "bg-blue-400 text-gray-900";
-  if (s === "Success") return "bg-green-500 text-white";
-  if (s === "Failed") return "bg-red-500 text-white";
-  return "bg-gray-300 text-gray-800";
+function StatusBadge({ status }: { status: string }) {
+  const config: Record<string, { cls: string; dot: string }> = {
+    Waiting: {
+      cls: "bg-amber-50 text-amber-700 border border-amber-200",
+      dot: "bg-amber-400 animate-pulse",
+    },
+    "In Process": {
+      cls: "bg-blue-50 text-blue-700 border border-blue-200",
+      dot: "bg-blue-400 animate-pulse",
+    },
+    Success: {
+      cls: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+      dot: "bg-emerald-500",
+    },
+    Failed: {
+      cls: "bg-red-50 text-red-700 border border-red-200",
+      dot: "bg-red-500",
+    },
+  };
+  const c = config[status] ?? { cls: "bg-slate-100 text-slate-600 border border-slate-200", dot: "bg-slate-400" };
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${c.cls}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+      {status}
+    </span>
+  );
 }
 
 function formatTimestamp(iso: string): string {
@@ -40,6 +60,19 @@ function formatTimestamp(iso: string): string {
   const min = String(d.getMinutes()).padStart(2, "0");
   const ss = String(d.getSeconds()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
+function LoadingSpinner({ cols }: { cols: number }) {
+  return (
+    <tr>
+      <td colSpan={cols} className="py-16 text-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-slate-200 border-t-slate-500 rounded-full animate-spin-smooth" style={{ borderWidth: 3 }} />
+          <span className="text-sm text-slate-400">Loading...</span>
+        </div>
+      </td>
+    </tr>
+  );
 }
 
 type ActiveTable = "emergency" | "breakdown";
@@ -74,86 +107,105 @@ export default function Home() {
     }
   }, [activeTable]);
 
-  const thClass = "px-4 py-3 text-center border border-gray-600";
-  const tdClass = "px-4 py-3 text-center text-gray-700 border border-gray-200";
+  const thCls = "px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 whitespace-nowrap";
+  const tdCls = "px-4 py-3.5 text-sm text-slate-700";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-12">
-          {t("home_title")}
-        </h1>
+    <div className="min-h-screen bg-slate-50">
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4">
+        <div className="container mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-4 py-1.5 mb-4">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-red-400 text-xs font-medium tracking-wide uppercase">Live Monitoring</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 animate-fadeInUp">
+            {t("home_title")}
+          </h1>
+          <p className="text-slate-400 text-sm max-w-md mx-auto animate-fadeInUp delay-100">
+            40 Building · KMUTNB
+          </p>
+        </div>
+      </div>
 
-        {/* Toggle Buttons */}
-        <div className="flex justify-center gap-8 mb-10">
+      <div className="container mx-auto px-4 py-8 -mt-4">
+        {/* Tab Selector */}
+        <div className="flex justify-center gap-3 mb-8 animate-fadeInUp delay-200">
           <button
             onClick={() => setActiveTable("emergency")}
-            className="text-white text-xl font-semibold py-4 px-10 rounded-lg transition-all duration-200 shadow-lg"
-            style={{
-              backgroundColor: "#dc2626",
-              outline: activeTable === "emergency" ? "3px solid #7f1d1d" : "none",
-              outlineOffset: "2px",
-            }}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg ${
+              activeTable === "emergency"
+                ? "bg-red-600 text-white shadow-red-500/30 scale-105"
+                : "bg-white text-slate-500 hover:text-red-600 hover:shadow-md border border-slate-200"
+            }`}
           >
+            <span className={`w-2 h-2 rounded-full ${activeTable === "emergency" ? "bg-red-200" : "bg-red-400"}`} />
             {t("btn_emergency")}
           </button>
           <button
             onClick={() => setActiveTable("breakdown")}
-            className="text-white text-xl font-semibold py-4 px-10 rounded-lg transition-all duration-200 shadow-lg"
-            style={{
-              backgroundColor: "#45cf13",
-              outline: activeTable === "breakdown" ? "3px solid #166534" : "none",
-              outlineOffset: "2px",
-            }}
+            className={`flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow-lg ${
+              activeTable === "breakdown"
+                ? "bg-emerald-600 text-white shadow-emerald-500/30 scale-105"
+                : "bg-white text-slate-500 hover:text-emerald-600 hover:shadow-md border border-slate-200"
+            }`}
           >
+            <span className={`w-2 h-2 rounded-full ${activeTable === "breakdown" ? "bg-emerald-200" : "bg-emerald-500"}`} />
             {t("btn_breakdown")}
           </button>
         </div>
 
-        {/* Table Title */}
-        <h3 className="text-xl font-semibold text-center text-gray-700 mb-6">
-          {activeTable === "emergency" ? t("btn_emergency") : t("btn_breakdown")} — {t("recent_events")}
-        </h3>
+        {/* Table Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-fadeInUp delay-300 mb-16">
+          {/* Card Header */}
+          <div className={`px-6 py-4 border-b border-slate-100 flex items-center justify-between ${
+            activeTable === "emergency"
+              ? "bg-gradient-to-r from-red-50 to-orange-50"
+              : "bg-gradient-to-r from-emerald-50 to-teal-50"
+          }`}>
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${activeTable === "emergency" ? "bg-red-500" : "bg-emerald-500"}`} />
+              <h3 className="font-semibold text-slate-700">
+                {activeTable === "emergency" ? t("btn_emergency") : t("btn_breakdown")} — {t("recent_events")}
+              </h3>
+            </div>
+            <span className="text-xs text-slate-400">
+              {activeTable === "emergency" ? emergencyRows.length : breakdownRows.length} {loading ? "" : "records"}
+            </span>
+          </div>
 
-        {/* Table */}
-        <div className="mb-16 pb-16 bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="overflow-x-auto overflow-y-auto max-h-[340px]">
-
-            {/* Emergency Table */}
+          {/* Table */}
+          <div className="overflow-x-auto overflow-y-auto max-h-[380px] custom-scroll">
             {activeTable === "emergency" && (
-              <table className="w-full border-collapse">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-gray-800 text-white">
-                    <th className={thClass}>{t("th_no")}</th>
-                    <th className={thClass}>{t("th_timestamp")}</th>
-                    <th className={thClass}>{t("th_floor")}</th>
-                    <th className={thClass}>{t("th_description")}</th>
-                    <th className={thClass}>{t("th_email")}</th>
-                    <th className={thClass}>{t("th_status")}</th>
+              <table className="w-full">
+                <thead className="sticky top-0 z-10 bg-slate-800">
+                  <tr>
+                    <th className={thCls}>{t("th_no")}</th>
+                    <th className={thCls}>{t("th_timestamp")}</th>
+                    <th className={thCls}>{t("th_floor")}</th>
+                    <th className={thCls}>{t("th_description")}</th>
+                    <th className={thCls}>{t("th_email")}</th>
+                    <th className={thCls}>{t("th_status")}</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {loading && (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">Loading...</td>
-                    </tr>
-                  )}
+                <tbody className="divide-y divide-slate-100">
+                  {loading && <LoadingSpinner cols={6} />}
                   {!loading && emergencyRows.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">{t("no_events")}</td>
+                      <td colSpan={6} className="py-16 text-center text-sm text-slate-400">{t("no_events")}</td>
                     </tr>
                   )}
-                  {!loading && emergencyRows.map((r: EmergencyRow, idx: number) => (
-                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                      <td className={tdClass}>{idx + 1}</td>
-                      <td className={tdClass}>{formatTimestamp(r.created_at)}</td>
-                      <td className={tdClass}>{r.floor}</td>
-                      <td className={tdClass}>{r.description}</td>
-                      <td className={tdClass}>{r.email}</td>
-                      <td className="px-4 py-3 text-center border border-gray-200">
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(r.status)}`}>
-                          {r.status}
-                        </span>
+                  {!loading && emergencyRows.map((r, idx) => (
+                    <tr key={r.id} className="hover:bg-slate-50 transition-colors duration-150">
+                      <td className={`${tdCls} text-slate-400 font-medium w-12`}>{idx + 1}</td>
+                      <td className={`${tdCls} text-slate-500 font-mono text-xs whitespace-nowrap`}>{formatTimestamp(r.created_at)}</td>
+                      <td className={`${tdCls} font-medium`}>{r.floor}</td>
+                      <td className={`${tdCls} max-w-xs`}>
+                        <span className="line-clamp-2">{r.description}</span>
+                      </td>
+                      <td className={`${tdCls} text-slate-500 text-xs`}>{r.email}</td>
+                      <td className={tdCls}>
+                        <StatusBadge status={r.status} />
                       </td>
                     </tr>
                   ))}
@@ -161,50 +213,46 @@ export default function Home() {
               </table>
             )}
 
-            {/* Breakdown Table */}
             {activeTable === "breakdown" && (
-              <table className="w-full border-collapse">
-                <thead className="sticky top-0 z-10">
-                  <tr className="bg-gray-800 text-white">
-                    <th className={thClass}>{t("th_no")}</th>
-                    <th className={thClass}>{t("th_timestamp")}</th>
-                    <th className={thClass}>{t("th_type")}</th>
-                    <th className={thClass}>{t("th_floor")}</th>
-                    <th className={thClass}>{t("th_description")}</th>
-                    <th className={thClass}>{t("th_email")}</th>
-                    <th className={thClass}>{t("th_status")}</th>
+              <table className="w-full">
+                <thead className="sticky top-0 z-10 bg-slate-800">
+                  <tr>
+                    <th className={thCls}>{t("th_no")}</th>
+                    <th className={thCls}>{t("th_timestamp")}</th>
+                    <th className={thCls}>{t("th_type")}</th>
+                    <th className={thCls}>{t("th_floor")}</th>
+                    <th className={thCls}>{t("th_description")}</th>
+                    <th className={thCls}>{t("th_email")}</th>
+                    <th className={thCls}>{t("th_status")}</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {loading && (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-gray-500">Loading...</td>
-                    </tr>
-                  )}
+                <tbody className="divide-y divide-slate-100">
+                  {loading && <LoadingSpinner cols={7} />}
                   {!loading && breakdownRows.length === 0 && (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-gray-500">{t("no_events")}</td>
+                      <td colSpan={7} className="py-16 text-center text-sm text-slate-400">{t("no_events")}</td>
                     </tr>
                   )}
-                  {!loading && breakdownRows.map((r: BreakdownRow, idx: number) => (
-                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                      <td className={tdClass}>{idx + 1}</td>
-                      <td className={tdClass}>{formatTimestamp(r.created_at)}</td>
-                      <td className={tdClass}>{r.breakdown_type}</td>
-                      <td className={tdClass}>{r.floor}</td>
-                      <td className={tdClass}>{r.description}</td>
-                      <td className={tdClass}>{r.email}</td>
-                      <td className="px-4 py-3 text-center border border-gray-200">
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(r.status)}`}>
-                          {r.status}
-                        </span>
+                  {!loading && breakdownRows.map((r, idx) => (
+                    <tr key={r.id} className="hover:bg-slate-50 transition-colors duration-150">
+                      <td className={`${tdCls} text-slate-400 font-medium w-12`}>{idx + 1}</td>
+                      <td className={`${tdCls} text-slate-500 font-mono text-xs whitespace-nowrap`}>{formatTimestamp(r.created_at)}</td>
+                      <td className={tdCls}>
+                        <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-medium">{r.breakdown_type}</span>
+                      </td>
+                      <td className={`${tdCls} font-medium`}>{r.floor}</td>
+                      <td className={`${tdCls} max-w-xs`}>
+                        <span className="line-clamp-2">{r.description}</span>
+                      </td>
+                      <td className={`${tdCls} text-slate-500 text-xs`}>{r.email}</td>
+                      <td className={tdCls}>
+                        <StatusBadge status={r.status} />
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             )}
-
           </div>
         </div>
       </div>

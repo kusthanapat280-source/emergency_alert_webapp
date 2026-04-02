@@ -42,72 +42,88 @@ export default function LoginAdmin() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm">
-        <div className="flex justify-center mb-6">
-          <Image
-            src="/KMUTNB_Logo.svg.png"
-            alt="KMUTNB Logo"
-            width={64}
-            height={64}
-            className="h-16 w-auto"
-          />
-        </div>
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Admin Login
-        </h2>
-
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-1 text-sm">
-              Email
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900 bg-white"
-              placeholder="Enter username or email"
-              required
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 font-medium mb-1 text-sm">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-900 bg-white"
-                placeholder="Enter password"
-                required
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+      <div className="w-full max-w-sm animate-fadeInUp">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          {/* Card Header */}
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-7 text-center">
+            <div className="relative inline-block mb-4">
+              <div className="absolute inset-0 bg-red-500/20 rounded-full blur-md" />
+              <Image
+                src="/KMUTNB_Logo.svg.png"
+                alt="KMUTNB Logo"
+                width={56}
+                height={56}
+                className="h-14 w-auto relative"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
+            <h2 className="text-xl font-bold text-white">Admin Portal</h2>
+            <p className="text-slate-400 text-xs mt-1">40 Building · KMUTNB</p>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-200 disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+
+          {/* Card Body */}
+          <div className="px-8 py-7">
+            {error && (
+              <div className="mb-5 p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-sm flex items-center gap-2 animate-fadeIn">
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Email / Username</label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400 transition-all"
+                  placeholder="Enter username or email"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2.5 pr-11 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400 transition-all"
+                    placeholder="Enter password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400 hover:text-slate-600 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 hover:from-slate-700 hover:to-slate-600 text-white font-semibold text-sm shadow-lg transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 mt-2"
+              >
+                {loading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin-smooth" />
+                    Logging in...
+                  </>
+                ) : "Login"}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <p className="text-center text-slate-600 text-xs mt-4">Authorized personnel only</p>
       </div>
     </div>
   );

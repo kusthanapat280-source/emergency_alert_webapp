@@ -10,9 +10,7 @@ export default function EmergencyPage() {
     description: "",
     reporter_email: "",
   });
-  const [message, setMessage] = useState<{ type: string; text: string } | null>(
-    null,
-  );
+  const [message, setMessage] = useState<{ type: string; text: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,169 +19,148 @@ export default function EmergencyPage() {
     setMessage(null);
 
     try {
-      // Replace with actual API endpoint
       const response = await fetch("/api/submit_emergency", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (response.ok) {
-        setMessage({
-          type: "success",
-          text: t("submit_success") || "Submitted successfully!",
-        });
+        setMessage({ type: "success", text: t("submit_success") || "Submitted successfully!" });
         setFormData({ floor: "", description: "", reporter_email: "" });
       } else {
-        setMessage({
-          type: "error",
-          text: t("submit_error") || "Submission failed. Please try again.",
-        });
+        setMessage({ type: "error", text: t("submit_error") || "Submission failed. Please try again." });
       }
-    } catch (error) {
-      setMessage({
-        type: "error",
-        text: t("submit_error") || "An error occurred. Please try again.",
-      });
+    } catch {
+      setMessage({ type: "error", text: t("submit_error") || "An error occurred. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 mb-16 pb-16">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          {t("emergency_title")}
-        </h2>
+  const inputCls = "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:border-red-400 transition-all duration-200";
 
-        {/* Flash Messages */}
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Page Header */}
+      <div className="bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 py-10 px-4">
+        <div className="container mx-auto text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/20 border border-red-500/30 mb-4">
+            <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-white animate-fadeInUp">
+            {t("emergency_title")}
+          </h2>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 mb-16">
+        {/* Flash Message */}
         {message && (
-          <div
-            className={`max-w-2xl mx-auto mb-4 p-4 rounded ${
-              message.type === "success"
-                ? "bg-green-100 text-green-800 border border-green-300"
-                : message.type === "error"
-                  ? "bg-red-100 text-red-800 border border-red-300"
-                  : "bg-yellow-100 text-yellow-800 border border-yellow-300"
-            }`}
-          >
-            <div className="flex justify-between items-center">
-              <span>{message.text}</span>
-              <button
-                onClick={() => setMessage(null)}
-                className="text-xl font-bold ml-4 hover:opacity-70"
-              >
-                ×
-              </button>
+          <div className={`max-w-2xl mx-auto mb-5 p-4 rounded-xl flex items-start justify-between gap-3 animate-fadeIn ${
+            message.type === "success"
+              ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+              : "bg-red-50 text-red-800 border border-red-200"
+          }`}>
+            <div className="flex items-center gap-2">
+              {message.type === "success" ? (
+                <svg className="w-5 h-5 text-emerald-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+              <span className="text-sm font-medium">{message.text}</span>
             </div>
+            <button onClick={() => setMessage(null)} className="text-lg leading-none opacity-60 hover:opacity-100 shrink-0">&times;</button>
           </div>
         )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8"
-        >
-          {/* Floor Selection */}
-          <div className="mb-4">
-            <label
-              htmlFor="floor"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              {t("emergency_floor_label")}
-            </label>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 bg-white"
-              id="floor"
-              name="floor"
-              value={formData.floor}
-              onChange={handleChange}
-              required
-            >
-              <option value="">{t("select_floor")}</option>
-              {Array.from({ length: 12 }, (_, i) => i + 1).map((i) => (
-                <option key={i} value={`${t("floor")} ${i}`}>
-                  {t("floor")} {i}
-                </option>
-              ))}
-            </select>
-          </div>
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-fadeInUp">
+            {/* Form Header */}
+            <div className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-4">
+              <h3 className="text-white font-semibold text-sm tracking-wide">กรอกข้อมูลเหตุฉุกเฉิน · Emergency Details</h3>
+            </div>
 
-          {/* Description */}
-          <div className="mb-4">
-            <label
-              htmlFor="description"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              {t("emergency_desc_label")}
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 bg-white"
-              id="description"
-              name="description"
-              rows={4}
-              placeholder={t("emergency_desc_placeholder")}
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
+            <div className="p-6 space-y-5">
+              {/* Floor */}
+              <div>
+                <label htmlFor="floor" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  {t("emergency_floor_label")} <span className="text-red-500">*</span>
+                </label>
+                <select
+                  className={inputCls}
+                  id="floor" name="floor"
+                  value={formData.floor} onChange={handleChange} required
+                >
+                  <option value="">{t("select_floor")}</option>
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((i) => (
+                    <option key={i} value={`${t("floor")} ${i}`}>{t("floor")} {i}</option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Email */}
-          <div className="mb-6">
-            <label
-              htmlFor="reporter_email"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              {t("emergency_email_label")}
-            </label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 bg-white"
-              id="reporter_email"
-              name="reporter_email"
-              placeholder="example@email.com"
-              value={formData.reporter_email}
-              onChange={handleChange}
-              required
-            />
-          </div>
+              {/* Description */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  {t("emergency_desc_label")} <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  className={inputCls}
+                  id="description" name="description"
+                  rows={4}
+                  placeholder={t("emergency_desc_placeholder")}
+                  value={formData.description} onChange={handleChange} required
+                />
+              </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center mb-6">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-16 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting
-                ? t("submitting") || "Submitting..."
-                : t("btn_submit")}
-            </button>
-          </div>
+              {/* Email */}
+              <div>
+                <label htmlFor="reporter_email" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  {t("emergency_email_label")} <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  className={inputCls}
+                  id="reporter_email" name="reporter_email"
+                  placeholder="example@email.com"
+                  value={formData.reporter_email} onChange={handleChange} required
+                />
+              </div>
 
-          {/* Emergency Contact Info */}
-          <div className="mb-2 p-4 bg-gray-100 rounded">
-            <h5 className="text-center text-red-600 font-semibold mb-2">
-              {t("emergency_contact")}
-            </h5>
-            <p className="text-center mb-0 text-black">
-              <strong>Baitan:</strong> 081-258-3826 | <strong>On:</strong>{" "}
-              087-852-6457
-            </p>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold text-sm shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin-smooth" />
+                    {t("submitting")}
+                  </>
+                ) : t("btn_submit")}
+              </button>
+
+              {/* Emergency Contact */}
+              <div className="bg-red-50 border border-red-100 rounded-xl p-4">
+                <p className="text-xs font-semibold text-red-600 text-center uppercase tracking-wide mb-2">{t("emergency_contact")}</p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-slate-700">
+                  <span><strong className="text-slate-800">Baitan:</strong> <a href="tel:0812583826" className="text-red-600 hover:underline">081-258-3826</a></span>
+                  <span className="hidden sm:inline text-slate-300">|</span>
+                  <span><strong className="text-slate-800">On:</strong> <a href="tel:0878526457" className="text-red-600 hover:underline">087-852-6457</a></span>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>

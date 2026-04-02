@@ -30,150 +30,123 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   return (
-    <nav className="bg-gray-800 shadow-lg">
+    <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl border-b border-slate-700/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo - Left */}
+
+          {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/KMUTNB_Logo.svg.png"
-                alt="KMUTNB Logo"
-                width={36}
-                height={36}
-                className="h-9 w-auto"
-              />
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-red-500/20 rounded-full blur-sm group-hover:bg-red-500/30 transition-all duration-300" />
+                <Image
+                  src="/KMUTNB_Logo.svg.png"
+                  alt="KMUTNB Logo"
+                  width={36}
+                  height={36}
+                  className="h-9 w-auto relative"
+                />
+              </div>
             </Link>
           </div>
 
-          {/* Navigation Links - Center (Desktop) */}
+          {/* Nav Links - Desktop */}
           <div className="hidden md:flex items-center justify-center flex-1">
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center gap-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        ? "text-white"
+                        : "text-slate-400 hover:text-white hover:bg-slate-700/50"
                     }`}
                   >
-                    {item.label}
+                    {isActive && (
+                      <span className="absolute inset-0 bg-red-600/20 rounded-lg border border-red-500/30" />
+                    )}
+                    <span className="relative">{item.label}</span>
+                    {isActive && (
+                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-red-500 rounded-full" />
+                    )}
                   </Link>
                 );
               })}
               <button
                 onClick={scrollToFooter}
-                className="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 text-gray-300 hover:bg-gray-700 hover:text-white"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200"
               >
                 {t("nav_contact")}
               </button>
             </div>
           </div>
 
-          {/* Language Toggle Button - Right (Desktop) */}
+          {/* Language Toggle - Desktop */}
           <div className="hidden md:flex items-center">
             <button
               onClick={toggleLanguage}
-              className="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium bg-slate-700/60 border border-slate-600/50 text-slate-300 hover:text-white hover:bg-slate-600/60 hover:border-slate-500/50 transition-all duration-200"
             >
-              <span className="mr-2">{language === "en" ? "EN" : "TH"}</span>
-              <span className="text-gray-400">|</span>
-              <span className="ml-2 text-gray-400">
-                {language === "en" ? "TH" : "EN"}
-              </span>
+              <span className={language === "en" ? "text-white font-semibold" : "text-slate-500"}>EN</span>
+              <span className="text-slate-600">|</span>
+              <span className={language === "th" ? "text-white font-semibold" : "text-slate-500"}>TH</span>
             </button>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-2">
             <button
-              onClick={toggleMenu}
-              className="text-gray-300 hover:text-white focus:outline-none focus:text-white p-2"
+              onClick={toggleLanguage}
+              className="px-3 py-1 rounded-full text-xs font-medium bg-slate-700/60 border border-slate-600/50 text-slate-300 hover:text-white transition-all"
+            >
+              {language === "en" ? "TH" : "EN"}
+            </button>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-slate-300 hover:text-white focus:outline-none p-2 rounded-lg hover:bg-slate-700/50 transition-all"
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? (
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
+              <div className="w-5 h-4 flex flex-col justify-between">
+                <span className={`block h-0.5 bg-current rounded transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
+                <span className={`block h-0.5 bg-current rounded transition-all duration-300 ${isMenuOpen ? "opacity-0 scale-x-0" : ""}`} />
+                <span className={`block h-0.5 bg-current rounded transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-2.5" : ""}`} />
+              </div>
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden pb-4">
-            <div className="flex flex-col space-y-2">
-              {navItems.map((item) => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                      isActive
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-              <button
-                onClick={scrollToFooter}
-                className="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 text-gray-300 hover:bg-gray-700 hover:text-white text-left"
-              >
-                {t("nav_contact")}
-              </button>
-              {/* Language Toggle for Mobile */}
-              <button
-                onClick={toggleLanguage}
-                className="flex items-center px-4 py-2 rounded-md text-sm font-medium bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200 w-fit"
-              >
-                <span className="mr-2">{language === "en" ? "EN" : "TH"}</span>
-                <span className="text-gray-400">|</span>
-                <span className="ml-2 text-gray-400">
-                  {language === "en" ? "TH" : "EN"}
-                </span>
-              </button>
-            </div>
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? "max-h-80 pb-4" : "max-h-0"}`}>
+          <div className="flex flex-col gap-1 pt-2 border-t border-slate-700/50">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive
+                      ? "bg-red-600/20 text-white border border-red-500/30"
+                      : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+            <button
+              onClick={scrollToFooter}
+              className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-700/50 hover:text-white transition-all text-left"
+            >
+              {t("nav_contact")}
+            </button>
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );
